@@ -2,6 +2,32 @@
 
 This is a full-stack web application that helps you extract and organize information from websites using custom templates powered by GPT. You define your own labels (like “Duration”, “Location”, or “Application Deadline”), add website URLs, and the app uses AI to retrieve relevant values — even when terms vary between pages or languages.
 
+## Example Use Case
+
+For example, you can compare acting course pages by extracting duration, requirements, application deadline, and tuition.
+
+##### User input
+Labels:
+- course title
+- organisor
+- date and duration
+- location
+- course time schedule
+- price
+
+Links:
+- course link 1
+- course link 2
+- course link 3
+
+##### Output
+- Course Title: Shakespeare Summer School (8 Weeks)
+- Organiser: London Academy of Music & Dramatic Art
+- Location: In-person at LAMDA
+- Date and Duration: Monday 16 June - Friday 8 August 2025 (8 Weeks)
+- Course Time Schedule: From 10am - 5:30pm each day
+- Price: UK Applicants: £3,500, International Applicants: £6,010
+
 ---
 
 ## ✨ Features
