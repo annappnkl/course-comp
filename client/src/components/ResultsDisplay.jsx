@@ -22,12 +22,9 @@ function CardDisplay({ card }) {
   const [usedSuggestions, setUsedSuggestions] = useState([]);
 
   const handleSuggestionClick = async (labelRaw) => {
-    const label = labelRaw.trim(); // always clean it
+    const label = labelRaw.trim();
   
     if (!label || usedSuggestions.includes(label)) return;
-  
-    console.log('🟦 Sending label:', label);
-    console.log('🟩 Card.rawText exists?', typeof card.rawText === 'string' && card.rawText.length > 10);
   
     try {
       const res = await axios.post('http://localhost:3001/infer-label', {
@@ -35,15 +32,19 @@ function CardDisplay({ card }) {
         rawText: card.rawText,
       });
   
+      const newValue = res.data.value || 'not found';
+  
       setValues((prev) => ({
         ...prev,
-        [label]: res.data.value || 'not found',
+        [label]: newValue,
       }));
+  
       setUsedSuggestions((prev) => [...prev, label]);
     } catch (err) {
       console.error('❌ Failed to fetch label:', err);
     }
   };
+  
   
 
   return (

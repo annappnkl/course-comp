@@ -58,31 +58,58 @@ ${text}
       const result = chatResponse.choices[0].message.content;
       const lines = result.split('\n').filter(Boolean);
 
-const values = {};
-let suggested = [];
+      const values = {};
+      let suggested = [];
+      
+      let collectingSuggested = false;
+      
+      for (let line of lines) {
+        const lower = line.toLowerCase();
+      
+        if (lower.startsWith('suggested labels to add')) {
+          // Case 1: inline format like: "Suggested labels to add: one, two"
+          const inlineMatch = line.match(/add:\s*(.*)/i);
+          if (inlineMatch && inlineMatch[1].includes(',')) {
+            suggested = inlineMatch[1]
+              .split(',')
+              .map((l) => l.trim())
+              .filter(Boolean);
+            collectingSuggested = false; // we're done
+          } else {
+            collectingSuggested = true; // maybe a Markdown list follows
+          }
+          continue;
+        }
+      
+        if (collectingSuggested) {
+          if (line.startsWith('- ')) {
+            suggested.push(line.replace('- ', '').trim());
+          } else {
+            collectingSuggested = false;
+          }
+        }
+      
+        if (!collectingSuggested) {
+          const [label, ...rest] = line.split(':');
+          if (label && rest.length > 0) {
+            values[label.trim()] = rest.join(':').trim();
+          }
+        }
+      }
+      
 
-for (let line of lines) {
-  if (line.toLowerCase().startsWith('suggested labels to add')) {
-    const match = line.match(/add:\s*(.*)/i);
-    if (match) {
-      suggested = match[1].split(',').map(label => label.trim());
-    }
-  } else {
-    const [label, ...rest] = line.split(':');
-    if (label && rest.length > 0) {
-      values[label.trim()] = rest.join(':').trim();
-    }
-  }
-}
+console.log('\n✅ Parsed values:', values);
+console.log('💡 Suggested labels:', suggested);
+console.log('--- Raw GPT response ---');
+console.log(result);
+console.log('------------------------\n');
 
 cards.push({
   url,
   values,
   suggested,
   rawText: text
-});
-
-      
+});   
 
     } catch (error) {
       console.error(`Error processing ${url}:`, error.message);
@@ -103,15 +130,15 @@ app.post('/infer-label', async (req, res) => {
 
 
   const prompt = `
-You are analyzing a website. Try to infer the value of the following label based on the content below.
-If no clear information is available, respond with "not found".
+Extract only the value that best matches the label below, based on the website content.
+Do not repeat the label. Respond with a short phrase or sentence fragment.
+If no information is available, reply only with: not found.
 
-Label:
-- ${label}
-
+Label: ${label}
 Website content:
 ${rawText}
-  `.trim();
+`.trim();
+
 
   try {
     const chatResponse = await openai.chat.completions.create({
