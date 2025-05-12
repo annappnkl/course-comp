@@ -32,7 +32,7 @@ function SourceInput({ urls, setUrls, labels, setCards }) {
   };
 
   return (
-    <div className="backdrop-blur-sm bg-white/80 shadow-inner p-6 rounded-2xl border border-gray-200 space-y-4">
+    <div className="backdrop-blur-sm bg-white/80 shadow-inner p-6 rounded-2xl border border-gray-200 space-y-4" onClick={(e) => e.stopPropagation()}>
       <h2 className="text-2xl font-semibold text-gray-900">2️⃣ Add Website Links</h2>
 
       <div className="flex gap-2">

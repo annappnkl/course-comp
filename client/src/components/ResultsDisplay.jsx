@@ -1,8 +1,13 @@
 import { useState } from 'react';
 import axios from 'axios';
 
-function ResultsDisplay({ cards }) {
+function ResultsDisplay({ cards , setCards, setUrls }) {
   if (cards.length === 0) return null;
+
+  const handleDelete = (urlToDelete) => {
+    setCards((prev) => prev.filter((c) => c.url !== urlToDelete));
+    setUrls((prev) => prev.filter((u) => u !== urlToDelete));
+  };
 
   return (
     <div className="backdrop-blur-sm bg-white/80 shadow-inner p-6 rounded-2xl border border-gray-200">
@@ -10,14 +15,14 @@ function ResultsDisplay({ cards }) {
 
       <div className="space-y-6">
         {cards.map((card, i) => (
-          <CardDisplay key={i} card={card} />
+          <CardDisplay key={i} card={card} onDelete={handleDelete} />
         ))}
       </div>
     </div>
   );
 }
 
-function CardDisplay({ card }) {
+function CardDisplay({ card, onDelete }) {
   const [values, setValues] = useState(card.values || {});
   const [usedSuggestions, setUsedSuggestions] = useState([]);
 
@@ -46,9 +51,21 @@ function CardDisplay({ card }) {
   };
   
   
+  
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl shadow-md p-5 transition-all hover:shadow-lg">
+    <div className="relative bg-white border border-gray-200 rounded-2xl shadow-md p-5 transition-all hover:shadow-lg">
+
+      {/* 🗑 Delete button */}
+      <button
+        onClick={() => onDelete(card.url)}
+        className="absolute top-2 right-2 p-1 text-gray-400 hover:text-red-600"
+        title="Delete"
+      >
+        🗑
+      </button>
+
+
       <p className="text-sm text-gray-500 mb-3 break-words">
         🔗 <a href={card.url} target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-600">{card.url}</a>
       </p>
@@ -65,20 +82,17 @@ function CardDisplay({ card }) {
         <div className="mt-4">
           <p className="text-sm font-medium text-gray-600 mb-1">💡 Suggested labels:</p>
           <div className="flex flex-wrap gap-2">
-            {card.suggested.map((label) => (
+          {card.suggested
+            .filter((label) => !usedSuggestions.includes(label))
+            .map((label) => (
               <button
                 key={label}
-                onClick={() => handleSuggestionClick(label.trim())}
-                disabled={usedSuggestions.includes(label)}
-                className={`px-3 py-1 text-sm rounded-full border ${
-                  usedSuggestions.includes(label)
-                    ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                    : 'bg-blue-50 text-blue-700 hover:bg-blue-100'
-                }`}
+                onClick={() => handleSuggestionClick(label)}
+                className="px-3 py-1 text-sm rounded-full border bg-blue-50 text-blue-700 hover:bg-blue-100"
               >
                 {label}
               </button>
-            ))}
+          ))}
           </div>
         </div>
       )}

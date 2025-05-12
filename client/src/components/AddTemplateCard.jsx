@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-function AddTemplateCard({ setLabels }) {
+function AddTemplateCard({ onSave }) {
   const [tempLabels, setTempLabels] = useState(['']);
 
   const updateLabel = (index, value) => {
@@ -13,11 +13,11 @@ function AddTemplateCard({ setLabels }) {
 
   const saveTemplate = () => {
     const cleaned = tempLabels.map((l) => l.trim()).filter(Boolean);
-    setLabels(cleaned);
+    onSave(cleaned);
   };
 
   return (
-    <div className="backdrop-blur-sm bg-white/80 shadow-inner p-6 rounded-2xl border border-gray-200 space-y-4">
+    <div className="backdrop-blur-sm bg-white/80 shadow-inner p-6 rounded-2xl border border-gray-200 space-y-4" onClick={(e) => e.stopPropagation()}>
       <h2 className="text-2xl font-semibold text-gray-900">1️⃣ Create Template</h2>
 
       <div className="space-y-2">
