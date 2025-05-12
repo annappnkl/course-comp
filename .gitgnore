@@ -1,0 +1,36 @@
+# Node dependencies
+node_modules/
+client/node_modules/
+
+# Build outputs
+dist/
+build/
+client/dist/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS/IDE noise
+.DS_Store
+.env
+.env.local
+.env.*.local
+.vscode/
+.idea/
+
+# Cache
+.cache/
+.next/
+*.log
+
+# Optional lockfiles
+pnpm-lock.yaml
+yarn.lock
+
+# Mac/Linux trash
+.Trash-*
+
+# Optional: if using coverage tools
+coverage/
